@@ -2,7 +2,10 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <title>Arboria — Join the Waitlist</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -22,17 +25,20 @@
       --danger:     #ff6b6b;
       --fd: 'Syne', sans-serif;
       --fm: 'DM Mono', monospace;
-      --r: 10px;
+      --r: 12px;
     }
 
-    html { height: 100%; background: var(--bg); }
+    html, body {
+      width: 100%;
+      height: 100%;
+      background: var(--bg);
+    }
 
     body {
-      min-height: 100%;
-      background: var(--bg);
       color: var(--text);
       font-family: var(--fd);
       overflow-x: hidden;
+      -webkit-text-size-adjust: 100%;
       background-image: radial-gradient(circle, #212b23 1px, transparent 1px);
       background-size: 26px 26px;
     }
@@ -40,41 +46,52 @@
     body::before {
       content: '';
       position: fixed;
-      top: -120px; left: 50%;
+      top: -100px; left: 50%;
       transform: translateX(-50%);
-      width: min(600px, 100vw);
-      height: 380px;
+      width: 100%;
+      height: 340px;
       background: radial-gradient(ellipse, rgba(93,255,176,0.07) 0%, transparent 70%);
       pointer-events: none;
       z-index: 0;
     }
 
+    /* ── Full-screen page shell ── */
     .page {
       position: relative;
       z-index: 1;
-      min-height: 100svh;
+      min-height: 100dvh;
+      width: 100%;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      padding: max(env(safe-area-inset-top), 20px) 16px max(env(safe-area-inset-bottom), 20px);
+      padding: 24px 20px;
+      padding-top: max(24px, env(safe-area-inset-top));
+      padding-bottom: max(24px, env(safe-area-inset-bottom));
     }
 
+    /* ── Card fills the screen on mobile ── */
     .card {
       width: 100%;
-      max-width: 420px;
+      max-width: 440px;
       background: var(--surface);
       border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 28px 24px 24px;
+      border-radius: 20px;
+      padding: 28px 22px 24px;
     }
 
-    /* brand strip */
+    /* On true mobile screens, card takes full width with breathing room */
+    @media (max-width: 500px) {
+      .page { padding: 16px; padding-top: max(16px, env(safe-area-inset-top)); padding-bottom: max(16px, env(safe-area-inset-bottom)); }
+      .card { border-radius: 18px; padding: 24px 18px 22px; max-width: 100%; }
+    }
+
+    /* ── Brand strip ── */
     .brand {
       display: flex;
       align-items: center;
       gap: 9px;
-      margin-bottom: 20px;
+      margin-bottom: 18px;
       opacity: 0;
       animation: up 0.35s ease 0.05s forwards;
     }
@@ -88,31 +105,33 @@
     }
     .brand-name b { color: var(--accent); font-weight: 500; }
 
-    /* headline */
+    /* ── Headline ── */
     .hl {
       margin-bottom: 6px;
       opacity: 0;
       animation: up 0.35s ease 0.1s forwards;
     }
     .hl h1 {
-      font-size: clamp(26px, 6.5vw, 36px);
+      font-size: 32px;
       font-weight: 800;
       line-height: 1.05;
       letter-spacing: -0.03em;
     }
     .hl h1 em { color: var(--accent); font-style: normal; display: block; }
 
+    @media (max-width: 380px) { .hl h1 { font-size: 28px; } }
+
     .sub {
       font-family: var(--fm);
       font-size: 12px;
       color: var(--muted);
       line-height: 1.65;
-      margin-bottom: 18px;
+      margin-bottom: 16px;
       opacity: 0;
       animation: up 0.35s ease 0.16s forwards;
     }
 
-    /* live badge */
+    /* ── Live badge ── */
     .badge {
       display: inline-flex;
       align-items: center;
@@ -123,14 +142,14 @@
       background: var(--accent-dim);
       border: 1px solid rgba(93,255,176,0.18);
       border-radius: 100px;
-      padding: 4px 12px 4px 8px;
-      margin-bottom: 20px;
+      padding: 5px 12px 5px 8px;
+      margin-bottom: 18px;
       width: fit-content;
       opacity: 0;
       animation: up 0.35s ease 0.2s forwards;
     }
     .dot {
-      width: 6px; height: 6px;
+      width: 7px; height: 7px;
       border-radius: 50%;
       background: var(--accent);
       box-shadow: 0 0 6px var(--accent);
@@ -139,25 +158,26 @@
     }
     @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.2} }
 
-    /* fields */
+    /* ── Fields ── */
     .fields {
       display: flex;
       flex-direction: column;
-      gap: 11px;
+      gap: 12px;
       opacity: 0;
       animation: up 0.35s ease 0.26s forwards;
     }
 
-    .field { display: flex; flex-direction: column; gap: 5px; }
+    .field { display: flex; flex-direction: column; gap: 6px; }
 
     label {
       font-family: var(--fm);
-      font-size: 10px;
-      letter-spacing: 0.12em;
+      font-size: 11px;
+      letter-spacing: 0.1em;
       text-transform: uppercase;
       color: var(--muted);
     }
 
+    /* 16px minimum stops iOS Safari from zooming on focus */
     input[type="text"],
     input[type="email"],
     select {
@@ -169,12 +189,12 @@
       border-radius: var(--r);
       color: var(--text);
       font-family: var(--fm);
-      font-size: 14px;
-      padding: 11px 14px;
+      font-size: 16px;
+      padding: 13px 14px;
       outline: none;
       transition: border-color 0.18s, box-shadow 0.18s;
-      /* prevent iOS zoom on focus — font-size must be >= 16px on iOS */
-      font-size: max(14px, 16px);
+      /* Prevent iOS double-tap zoom */
+      touch-action: manipulation;
     }
     input::placeholder { color: #2c3830; }
     input:focus, select:focus {
@@ -186,53 +206,50 @@
       cursor: pointer;
       background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='7' viewBox='0 0 12 7'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%236b7d70' stroke-width='1.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
       background-repeat: no-repeat;
-      background-position: right 13px center;
-      padding-right: 36px;
+      background-position: right 14px center;
+      padding-right: 40px;
     }
     select option { background: #181f1a; }
     select.ph { color: #2c3830; }
 
-    /* ── T&C checkbox ── */
+    /* ── T&C Checkbox ── */
     .check-row {
       display: flex;
       align-items: flex-start;
-      gap: 10px;
+      gap: 11px;
       padding: 2px 0;
     }
 
     .check-row input[type="checkbox"] {
       -webkit-appearance: none;
       appearance: none;
-      width: 18px;
-      height: 18px;
-      min-width: 18px;
+      width: 20px;
+      height: 20px;
+      min-width: 20px;
       background: var(--bg);
       border: 1px solid var(--border);
-      border-radius: 4px;
+      border-radius: 5px;
       cursor: pointer;
       margin-top: 1px;
       transition: border-color 0.18s, background 0.18s;
       position: relative;
       padding: 0;
-      font-size: 14px;
+      touch-action: manipulation;
     }
-
     .check-row input[type="checkbox"]:checked {
       background: var(--accent);
       border-color: var(--accent);
     }
-
     .check-row input[type="checkbox"]:checked::after {
       content: '';
       position: absolute;
-      left: 4px; top: 2px;
-      width: 5px; height: 9px;
+      left: 5px; top: 2px;
+      width: 6px; height: 10px;
       border: 2px solid #0a1610;
       border-top: none;
       border-left: none;
       transform: rotate(45deg);
     }
-
     .check-row input[type="checkbox"]:focus {
       outline: none;
       border-color: var(--accent);
@@ -241,14 +258,13 @@
 
     .check-label {
       font-family: var(--fm);
-      font-size: 11px;
+      font-size: 12px;
       color: var(--muted);
       line-height: 1.6;
       cursor: pointer;
       text-transform: none;
       letter-spacing: 0;
     }
-
     .check-label a {
       color: var(--accent);
       text-decoration: none;
@@ -256,44 +272,43 @@
     }
     .check-label a:hover { border-bottom-color: var(--accent); }
 
-    /* honeypot */
+    /* ── Honeypot ── */
     .hp { position: absolute; left: -9999px; opacity: 0; pointer-events: none; }
 
-    /* turnstile */
+    /* ── Turnstile ── */
     .ts-wrap { margin-top: 2px; }
 
-    /* button */
+    /* ── Submit button ── */
     .btn {
       width: 100%;
       margin-top: 6px;
-      padding: 14px;
+      padding: 16px;
       background: var(--accent);
       color: #0a1610;
       border: none;
       border-radius: var(--r);
       font-family: var(--fd);
       font-weight: 800;
-      font-size: 15px;
+      font-size: 16px;
       letter-spacing: 0.02em;
       cursor: pointer;
       transition: opacity 0.18s, transform 0.12s;
-      opacity: 0;
-      animation: up 0.35s ease 0.36s forwards;
-      /* tap highlight on mobile */
       -webkit-tap-highlight-color: transparent;
       touch-action: manipulation;
+      opacity: 0;
+      animation: up 0.35s ease 0.36s forwards;
     }
-    .btn:hover:not(:disabled) { opacity: 0.87; transform: translateY(-1px); }
-    .btn:active:not(:disabled) { transform: none; opacity: 0.75; }
+    .btn:hover:not(:disabled) { opacity: 0.87; }
+    .btn:active:not(:disabled) { opacity: 0.7; transform: scale(0.99); }
     .btn:disabled { opacity: 0.4; cursor: not-allowed; }
 
-    /* status */
+    /* ── Status messages ── */
     .status {
       display: none;
       border-radius: var(--r);
-      padding: 11px 14px;
+      padding: 12px 14px;
       font-family: var(--fm);
-      font-size: 12px;
+      font-size: 13px;
       line-height: 1.55;
       margin-top: 12px;
     }
@@ -312,7 +327,7 @@
     .card.done .btn { display: none; }
     .card.done .ok { display: block; }
 
-    /* footer */
+    /* ── Footer ── */
     .foot {
       margin-top: 14px;
       font-family: var(--fm);
@@ -325,30 +340,20 @@
     .foot a { color: var(--muted); text-decoration: none; }
     .foot a:hover { color: var(--accent); }
 
+    /* ── Short viewport (landscape mobile) ── */
+    @media (max-height: 700px) {
+      .card { padding: 18px 18px 16px; }
+      .brand { margin-bottom: 12px; }
+      .sub { margin-bottom: 12px; font-size: 11px; }
+      .badge { margin-bottom: 12px; }
+      .hl h1 { font-size: 26px; }
+      .fields { gap: 10px; }
+      .btn { padding: 13px; }
+    }
+
     @keyframes up {
       from { opacity: 0; transform: translateY(10px); }
       to   { opacity: 1; transform: translateY(0); }
-    }
-
-    /* ── Mobile tweaks ── */
-    @media (max-width: 480px) {
-      .page { padding-top: max(env(safe-area-inset-top), 16px); }
-      .card { border-radius: 14px; padding: 22px 18px 20px; }
-      .hl h1 { font-size: 28px; }
-    }
-
-    /* Landscape / short viewport */
-    @media (max-height: 680px) {
-      .card { padding: 18px 18px 16px; }
-      .brand { margin-bottom: 12px; }
-      .sub { margin-bottom: 12px; }
-      .badge { margin-bottom: 14px; }
-      .hl h1 { font-size: 24px; }
-      .fields { gap: 9px; }
-    }
-
-    @media (max-width: 360px) {
-      .card { padding: 18px 14px 16px; border-radius: 12px; }
     }
   </style>
 </head>
@@ -419,7 +424,7 @@
         </label>
       </div>
 
-      <!-- Honeypot (hidden from humans) -->
+      <!-- Honeypot -->
       <div class="hp" aria-hidden="true">
         <input type="text" id="website" name="website" tabindex="-1" autocomplete="off" />
       </div>
@@ -453,20 +458,15 @@
 <script>
   const WEBHOOK = 'https://n8n.arboriasg.com/webhook/desk-buddy-waitlist';
 
-  // Dropdown colour: grey when unselected, white when chosen
   const sel = document.getElementById('interest');
   sel.addEventListener('change', () => sel.classList.toggle('ph', !sel.value));
 
-  // Detect country from IP — free, no key needed
-  // Returns 'SG', 'AU', 'US' etc. or 'Unknown' if it fails
   async function getCountry() {
     try {
       const r = await fetch('https://ipapi.co/json/', { signal: AbortSignal.timeout(4000) });
       const d = await r.json();
       return d.country_name || d.country || 'Unknown';
-    } catch {
-      return 'Unknown';
-    }
+    } catch { return 'Unknown'; }
   }
 
   document.getElementById('submitBtn').addEventListener('click', async () => {
@@ -475,13 +475,11 @@
     const email    = document.getElementById('email').value.trim();
     const agreed   = document.getElementById('agree').checked;
     const honeypot = document.getElementById('website').value;
-    const errEl    = document.getElementById('errorMsg');
     const btn      = document.getElementById('submitBtn');
 
-    errEl.style.display = 'none';
+    document.getElementById('errorMsg').style.display = 'none';
 
     if (honeypot) return;
-
     if (!fullName)                      return showErr('Please enter your full name.');
     if (!interest)                      return showErr('Please select a project you\'re interested in.');
     if (!email || !email.includes('@')) return showErr('Please enter a valid email address.');
@@ -493,7 +491,6 @@
     btn.disabled = true;
     btn.textContent = 'Submitting…';
 
-    // Get country in parallel while we prepare submission
     const country = await getCountry();
 
     try {
@@ -501,12 +498,8 @@
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          fullName,
-          interest,
-          email,
-          country,
-          honeypot,
-          cfTurnstileToken: token,
+          fullName, interest, email, country,
+          honeypot, cfTurnstileToken: token,
           source: 'waitlist.arboriasg.com',
           submittedAt: new Date().toISOString(),
         }),
