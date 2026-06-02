@@ -173,6 +173,8 @@
       padding: 11px 14px;
       outline: none;
       transition: border-color 0.18s, box-shadow 0.18s;
+      /* prevent iOS zoom on focus — font-size must be >= 16px on iOS */
+      font-size: max(14px, 16px);
     }
     input::placeholder { color: #2c3830; }
     input:focus, select:focus {
@@ -190,6 +192,70 @@
     select option { background: #181f1a; }
     select.ph { color: #2c3830; }
 
+    /* ── T&C checkbox ── */
+    .check-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 2px 0;
+    }
+
+    .check-row input[type="checkbox"] {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 18px;
+      height: 18px;
+      min-width: 18px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      cursor: pointer;
+      margin-top: 1px;
+      transition: border-color 0.18s, background 0.18s;
+      position: relative;
+      padding: 0;
+      font-size: 14px;
+    }
+
+    .check-row input[type="checkbox"]:checked {
+      background: var(--accent);
+      border-color: var(--accent);
+    }
+
+    .check-row input[type="checkbox"]:checked::after {
+      content: '';
+      position: absolute;
+      left: 4px; top: 2px;
+      width: 5px; height: 9px;
+      border: 2px solid #0a1610;
+      border-top: none;
+      border-left: none;
+      transform: rotate(45deg);
+    }
+
+    .check-row input[type="checkbox"]:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(93,255,176,0.07);
+    }
+
+    .check-label {
+      font-family: var(--fm);
+      font-size: 11px;
+      color: var(--muted);
+      line-height: 1.6;
+      cursor: pointer;
+      text-transform: none;
+      letter-spacing: 0;
+    }
+
+    .check-label a {
+      color: var(--accent);
+      text-decoration: none;
+      border-bottom: 1px solid rgba(93,255,176,0.3);
+    }
+    .check-label a:hover { border-bottom-color: var(--accent); }
+
     /* honeypot */
     .hp { position: absolute; left: -9999px; opacity: 0; pointer-events: none; }
 
@@ -200,7 +266,7 @@
     .btn {
       width: 100%;
       margin-top: 6px;
-      padding: 13px;
+      padding: 14px;
       background: var(--accent);
       color: #0a1610;
       border: none;
@@ -213,9 +279,12 @@
       transition: opacity 0.18s, transform 0.12s;
       opacity: 0;
       animation: up 0.35s ease 0.36s forwards;
+      /* tap highlight on mobile */
+      -webkit-tap-highlight-color: transparent;
+      touch-action: manipulation;
     }
     .btn:hover:not(:disabled) { opacity: 0.87; transform: translateY(-1px); }
-    .btn:active:not(:disabled) { transform: none; }
+    .btn:active:not(:disabled) { transform: none; opacity: 0.75; }
     .btn:disabled { opacity: 0.4; cursor: not-allowed; }
 
     /* status */
@@ -261,17 +330,25 @@
       to   { opacity: 1; transform: translateY(0); }
     }
 
-    /* Compact on short viewports (e.g. landscape mobile) */
-    @media (max-height: 660px) {
-      .card { padding: 20px 18px 18px; }
-      .brand { margin-bottom: 14px; }
+    /* ── Mobile tweaks ── */
+    @media (max-width: 480px) {
+      .page { padding-top: max(env(safe-area-inset-top), 16px); }
+      .card { border-radius: 14px; padding: 22px 18px 20px; }
+      .hl h1 { font-size: 28px; }
+    }
+
+    /* Landscape / short viewport */
+    @media (max-height: 680px) {
+      .card { padding: 18px 18px 16px; }
+      .brand { margin-bottom: 12px; }
       .sub { margin-bottom: 12px; }
       .badge { margin-bottom: 14px; }
       .hl h1 { font-size: 24px; }
       .fields { gap: 9px; }
     }
+
     @media (max-width: 360px) {
-      .card { padding: 20px 14px 18px; border-radius: 12px; }
+      .card { padding: 18px 14px 16px; border-radius: 12px; }
     }
   </style>
 </head>
@@ -331,6 +408,17 @@
                autocomplete="email" />
       </div>
 
+      <!-- T&C checkbox -->
+      <div class="check-row">
+        <input type="checkbox" id="agree" name="agree" />
+        <label class="check-label" for="agree">
+          I agree to the
+          <a href="/terms" target="_blank" rel="noopener">Terms &amp; Conditions</a>
+          and
+          <a href="/privacy" target="_blank" rel="noopener">Privacy Policy</a>
+        </label>
+      </div>
+
       <!-- Honeypot (hidden from humans) -->
       <div class="hp" aria-hidden="true">
         <input type="text" id="website" name="website" tabindex="-1" autocomplete="off" />
@@ -369,10 +457,23 @@
   const sel = document.getElementById('interest');
   sel.addEventListener('change', () => sel.classList.toggle('ph', !sel.value));
 
+  // Detect country from IP — free, no key needed
+  // Returns 'SG', 'AU', 'US' etc. or 'Unknown' if it fails
+  async function getCountry() {
+    try {
+      const r = await fetch('https://ipapi.co/json/', { signal: AbortSignal.timeout(4000) });
+      const d = await r.json();
+      return d.country_name || d.country || 'Unknown';
+    } catch {
+      return 'Unknown';
+    }
+  }
+
   document.getElementById('submitBtn').addEventListener('click', async () => {
     const fullName = document.getElementById('fullName').value.trim();
     const interest = sel.value;
     const email    = document.getElementById('email').value.trim();
+    const agreed   = document.getElementById('agree').checked;
     const honeypot = document.getElementById('website').value;
     const errEl    = document.getElementById('errorMsg');
     const btn      = document.getElementById('submitBtn');
@@ -384,6 +485,7 @@
     if (!fullName)                      return showErr('Please enter your full name.');
     if (!interest)                      return showErr('Please select a project you\'re interested in.');
     if (!email || !email.includes('@')) return showErr('Please enter a valid email address.');
+    if (!agreed)                        return showErr('Please agree to the Terms & Conditions and Privacy Policy.');
 
     const token = document.querySelector('[name="cf-turnstile-response"]')?.value;
     if (!token) return showErr('Please complete the human check above.');
@@ -391,12 +493,19 @@
     btn.disabled = true;
     btn.textContent = 'Submitting…';
 
+    // Get country in parallel while we prepare submission
+    const country = await getCountry();
+
     try {
       const res = await fetch(WEBHOOK, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          fullName, interest, email, honeypot,
+          fullName,
+          interest,
+          email,
+          country,
+          honeypot,
           cfTurnstileToken: token,
           source: 'waitlist.arboriasg.com',
           submittedAt: new Date().toISOString(),
