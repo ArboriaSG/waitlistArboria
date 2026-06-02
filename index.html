@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>Arboria — Join the Waitlist</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:         #0d0f0e;
+      --surface:    #131715;
+      --border:     #252b27;
+      --text:       #e4ebe5;
+      --muted:      #6b7d70;
+      --accent:     #5dffb0;
+      --accent-dim: #132b1f;
+      --danger:     #ff6b6b;
+      --fd: 'Syne', sans-serif;
+      --fm: 'DM Mono', monospace;
+      --r: 10px;
+    }
+
+    html { height: 100%; background: var(--bg); }
+
+    body {
+      min-height: 100%;
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--fd);
+      overflow-x: hidden;
+      background-image: radial-gradient(circle, #212b23 1px, transparent 1px);
+      background-size: 26px 26px;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      top: -120px; left: 50%;
+      transform: translateX(-50%);
+      width: min(600px, 100vw);
+      height: 380px;
+      background: radial-gradient(ellipse, rgba(93,255,176,0.07) 0%, transparent 70%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .page {
+      position: relative;
+      z-index: 1;
+      min-height: 100svh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: max(env(safe-area-inset-top), 20px) 16px max(env(safe-area-inset-bottom), 20px);
+    }
+
+    .card {
+      width: 100%;
+      max-width: 420px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 28px 24px 24px;
+    }
+
+    /* brand strip */
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      margin-bottom: 20px;
+      opacity: 0;
+      animation: up 0.35s ease 0.05s forwards;
+    }
+    .brand svg { width: 28px; height: 28px; flex-shrink: 0; }
+    .brand-name {
+      font-family: var(--fm);
+      font-size: 11px;
+      color: var(--muted);
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+    }
+    .brand-name b { color: var(--accent); font-weight: 500; }
+
+    /* headline */
+    .hl {
+      margin-bottom: 6px;
+      opacity: 0;
+      animation: up 0.35s ease 0.1s forwards;
+    }
+    .hl h1 {
+      font-size: clamp(26px, 6.5vw, 36px);
+      font-weight: 800;
+      line-height: 1.05;
+      letter-spacing: -0.03em;
+    }
+    .hl h1 em { color: var(--accent); font-style: normal; display: block; }
+
+    .sub {
+      font-family: var(--fm);
+      font-size: 12px;
+      color: var(--muted);
+      line-height: 1.65;
+      margin-bottom: 18px;
+      opacity: 0;
+      animation: up 0.35s ease 0.16s forwards;
+    }
+
+    /* live badge */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      font-family: var(--fm);
+      font-size: 11px;
+      color: var(--accent);
+      background: var(--accent-dim);
+      border: 1px solid rgba(93,255,176,0.18);
+      border-radius: 100px;
+      padding: 4px 12px 4px 8px;
+      margin-bottom: 20px;
+      width: fit-content;
+      opacity: 0;
+      animation: up 0.35s ease 0.2s forwards;
+    }
+    .dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--accent);
+      box-shadow: 0 0 6px var(--accent);
+      flex-shrink: 0;
+      animation: blink 2s ease infinite;
+    }
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.2} }
+
+    /* fields */
+    .fields {
+      display: flex;
+      flex-direction: column;
+      gap: 11px;
+      opacity: 0;
+      animation: up 0.35s ease 0.26s forwards;
+    }
+
+    .field { display: flex; flex-direction: column; gap: 5px; }
+
+    label {
+      font-family: var(--fm);
+      font-size: 10px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    input[type="text"],
+    input[type="email"],
+    select {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 100%;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: var(--r);
+      color: var(--text);
+      font-family: var(--fm);
+      font-size: 14px;
+      padding: 11px 14px;
+      outline: none;
+      transition: border-color 0.18s, box-shadow 0.18s;
+    }
+    input::placeholder { color: #2c3830; }
+    input:focus, select:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(93,255,176,0.07);
+    }
+
+    select {
+      cursor: pointer;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='7' viewBox='0 0 12 7'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%236b7d70' stroke-width='1.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 13px center;
+      padding-right: 36px;
+    }
+    select option { background: #181f1a; }
+    select.ph { color: #2c3830; }
+
+    /* honeypot */
+    .hp { position: absolute; left: -9999px; opacity: 0; pointer-events: none; }
+
+    /* turnstile */
+    .ts-wrap { margin-top: 2px; }
+
+    /* button */
+    .btn {
+      width: 100%;
+      margin-top: 6px;
+      padding: 13px;
+      background: var(--accent);
+      color: #0a1610;
+      border: none;
+      border-radius: var(--r);
+      font-family: var(--fd);
+      font-weight: 800;
+      font-size: 15px;
+      letter-spacing: 0.02em;
+      cursor: pointer;
+      transition: opacity 0.18s, transform 0.12s;
+      opacity: 0;
+      animation: up 0.35s ease 0.36s forwards;
+    }
+    .btn:hover:not(:disabled) { opacity: 0.87; transform: translateY(-1px); }
+    .btn:active:not(:disabled) { transform: none; }
+    .btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+    /* status */
+    .status {
+      display: none;
+      border-radius: var(--r);
+      padding: 11px 14px;
+      font-family: var(--fm);
+      font-size: 12px;
+      line-height: 1.55;
+      margin-top: 12px;
+    }
+    .ok {
+      background: var(--accent-dim);
+      border: 1px solid rgba(93,255,176,0.25);
+      color: var(--accent);
+    }
+    .err {
+      background: rgba(255,107,107,0.07);
+      border: 1px solid rgba(255,107,107,0.25);
+      color: var(--danger);
+    }
+
+    .card.done .fields,
+    .card.done .btn { display: none; }
+    .card.done .ok { display: block; }
+
+    /* footer */
+    .foot {
+      margin-top: 14px;
+      font-family: var(--fm);
+      font-size: 11px;
+      color: var(--muted);
+      text-align: center;
+      opacity: 0;
+      animation: up 0.35s ease 0.44s forwards;
+    }
+    .foot a { color: var(--muted); text-decoration: none; }
+    .foot a:hover { color: var(--accent); }
+
+    @keyframes up {
+      from { opacity: 0; transform: translateY(10px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Compact on short viewports (e.g. landscape mobile) */
+    @media (max-height: 660px) {
+      .card { padding: 20px 18px 18px; }
+      .brand { margin-bottom: 14px; }
+      .sub { margin-bottom: 12px; }
+      .badge { margin-bottom: 14px; }
+      .hl h1 { font-size: 24px; }
+      .fields { gap: 9px; }
+    }
+    @media (max-width: 360px) {
+      .card { padding: 20px 14px 18px; border-radius: 12px; }
+    }
+  </style>
+</head>
+<body>
+<div class="page">
+  <div class="card" id="card">
+
+    <!-- Brand -->
+    <div class="brand">
+      <svg viewBox="0 0 28 28" xmlns="http://www.w3.org/2000/svg">
+        <rect width="28" height="28" rx="6" fill="#132b1f"/>
+        <rect x="6" y="6" width="16" height="16" rx="2" fill="#1e4a30"/>
+        <rect x="9" y="10" width="3" height="3" fill="#5dffb0"/>
+        <rect x="16" y="10" width="3" height="3" fill="#5dffb0"/>
+        <rect x="9" y="16" width="2" height="2" fill="#5dffb0"/>
+        <rect x="17" y="16" width="2" height="2" fill="#5dffb0"/>
+        <rect x="11" y="17" width="6" height="2" fill="#5dffb0"/>
+      </svg>
+      <span class="brand-name"><b>Arboria</b> · Early Access</span>
+    </div>
+
+    <!-- Headline -->
+    <div class="hl">
+      <h1>Be first.<em>Shape what's next.</em></h1>
+    </div>
+    <p class="sub">Tell us your name and what you're excited about — we'll reach out before anyone else.</p>
+
+    <!-- Live badge -->
+    <div class="badge" id="badge">
+      <span class="dot"></span>Waitlist open · first 20 spots
+    </div>
+
+    <!-- Form fields -->
+    <div class="fields">
+
+      <div class="field">
+        <label for="fullName">Full name</label>
+        <input type="text" id="fullName" name="fullName"
+               placeholder="e.g. Ada Lovelace"
+               autocomplete="name" />
+      </div>
+
+      <div class="field">
+        <label for="interest">I'm interested in…</label>
+        <select id="interest" name="interest" class="ph">
+          <option value="" disabled selected hidden>Pick a project</option>
+          <option value="Desk Buddy">🤖  Desk Buddy — Arduino desk mascot</option>
+          <option value="Pomodoro">🍅  Pomodoro — focus timer gadget</option>
+          <option value="All of the Above">✨  All of the above</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label for="email">Email address</label>
+        <input type="email" id="email" name="email"
+               placeholder="ada@example.com"
+               autocomplete="email" />
+      </div>
+
+      <!-- Honeypot (hidden from humans) -->
+      <div class="hp" aria-hidden="true">
+        <input type="text" id="website" name="website" tabindex="-1" autocomplete="off" />
+      </div>
+
+      <!-- Cloudflare Turnstile -->
+      <div class="ts-wrap">
+        <div class="cf-turnstile"
+             data-sitekey="YOUR_TURNSTILE_SITE_KEY"
+             data-theme="dark"
+             data-size="flexible">
+        </div>
+      </div>
+    </div>
+
+    <button class="btn" id="submitBtn" type="button">Join the Waitlist →</button>
+
+    <div class="status ok" id="successMsg">
+      ✓ You're on the list! We'll be in touch before anyone else. Keep an eye on your inbox.
+    </div>
+    <div class="status err" id="errorMsg"></div>
+
+  </div>
+
+  <p class="foot">
+    © 2026 Arboria · Singapore &nbsp;·&nbsp;
+    <a href="mailto:hello@arboriasg.com">hello@arboriasg.com</a> &nbsp;·&nbsp;
+    <a href="https://arboriasg.com">arboriasg.com</a>
+  </p>
+</div>
+
+<script>
+  const WEBHOOK = 'https://n8n.arboriasg.com/webhook/desk-buddy-waitlist';
+
+  // Dropdown colour: grey when unselected, white when chosen
+  const sel = document.getElementById('interest');
+  sel.addEventListener('change', () => sel.classList.toggle('ph', !sel.value));
+
+  document.getElementById('submitBtn').addEventListener('click', async () => {
+    const fullName = document.getElementById('fullName').value.trim();
+    const interest = sel.value;
+    const email    = document.getElementById('email').value.trim();
+    const honeypot = document.getElementById('website').value;
+    const errEl    = document.getElementById('errorMsg');
+    const btn      = document.getElementById('submitBtn');
+
+    errEl.style.display = 'none';
+
+    if (honeypot) return;
+
+    if (!fullName)                      return showErr('Please enter your full name.');
+    if (!interest)                      return showErr('Please select a project you\'re interested in.');
+    if (!email || !email.includes('@')) return showErr('Please enter a valid email address.');
+
+    const token = document.querySelector('[name="cf-turnstile-response"]')?.value;
+    if (!token) return showErr('Please complete the human check above.');
+
+    btn.disabled = true;
+    btn.textContent = 'Submitting…';
+
+    try {
+      const res = await fetch(WEBHOOK, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          fullName, interest, email, honeypot,
+          cfTurnstileToken: token,
+          source: 'waitlist.arboriasg.com',
+          submittedAt: new Date().toISOString(),
+        }),
+      });
+
+      if (res.ok) {
+        document.getElementById('card').classList.add('done');
+        document.getElementById('successMsg').style.display = 'block';
+        document.getElementById('badge').innerHTML = '🎉 &nbsp;You\'re on the list!';
+      } else {
+        const body = await res.json().catch(() => ({}));
+        showErr(body.message || 'Something went wrong — please try again.');
+        btn.disabled = false;
+        btn.textContent = 'Join the Waitlist →';
+      }
+    } catch {
+      showErr('Network error — please check your connection and try again.');
+      btn.disabled = false;
+      btn.textContent = 'Join the Waitlist →';
+    }
+  });
+
+  function showErr(msg) {
+    const el = document.getElementById('errorMsg');
+    el.textContent = '⚠ ' + msg;
+    el.style.display = 'block';
+  }
+</script>
+</body>
+</html>
