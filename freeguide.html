@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <title>Free Cheatsheet — Arboria</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:         #0d0f0e;
+      --surface:    #131715;
+      --border:     #252b27;
+      --text:       #e4ebe5;
+      --muted:      #6b7d70;
+      --accent:     #5dffb0;
+      --accent-dim: #132b1f;
+      --accent2:    #ffe27a;
+      --accent2-dim:#2a2010;
+      --danger:     #ff6b6b;
+      --fd: 'Syne', sans-serif;
+      --fm: 'DM Mono', monospace;
+      --r: 12px;
+    }
+
+    html, body { width: 100%; min-height: 100%; background: var(--bg); }
+
+    body {
+      color: var(--text);
+      font-family: var(--fd);
+      overflow-x: hidden;
+      -webkit-text-size-adjust: 100%;
+      background-image: radial-gradient(circle, #212b23 1px, transparent 1px);
+      background-size: 26px 26px;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      top: -100px; left: 50%;
+      transform: translateX(-50%);
+      width: 100%;
+      height: 340px;
+      background: radial-gradient(ellipse, rgba(255,226,122,0.06) 0%, transparent 70%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .page {
+      position: relative;
+      z-index: 1;
+      min-height: 100dvh;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: max(env(safe-area-inset-top), 20px) 16px max(env(safe-area-inset-bottom), 20px);
+    }
+
+    .card {
+      width: 100%;
+      max-width: 440px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 28px 24px 24px;
+    }
+
+    @media (max-width: 500px) {
+      .page { padding: 16px; padding-top: max(16px, env(safe-area-inset-top)); padding-bottom: max(16px, env(safe-area-inset-bottom)); }
+      .card { border-radius: 18px; padding: 24px 18px 22px; max-width: 100%; }
+    }
+
+    /* Brand */
+    .brand {
+      display: flex; align-items: center; gap: 9px;
+      margin-bottom: 20px;
+      opacity: 0; animation: up 0.35s ease 0.05s forwards;
+    }
+    .brand svg { width: 28px; height: 28px; flex-shrink: 0; }
+    .brand-name { font-family: var(--fm); font-size: 11px; color: var(--muted); letter-spacing: 0.14em; text-transform: uppercase; }
+    .brand-name b { color: var(--accent); font-weight: 500; }
+
+    /* Free badge */
+    .free-badge {
+      display: inline-flex; align-items: center; gap: 7px;
+      font-family: var(--fm); font-size: 11px;
+      color: var(--accent2);
+      background: var(--accent2-dim);
+      border: 1px solid rgba(255,226,122,0.2);
+      border-radius: 100px;
+      padding: 5px 12px 5px 8px;
+      margin-bottom: 16px; width: fit-content;
+      opacity: 0; animation: up 0.35s ease 0.1s forwards;
+    }
+    .free-badge-dot {
+      width: 7px; height: 7px; border-radius: 50%;
+      background: var(--accent2); box-shadow: 0 0 6px var(--accent2);
+      flex-shrink: 0;
+    }
+
+    /* Headline */
+    .hl { margin-bottom: 8px; opacity: 0; animation: up 0.35s ease 0.15s forwards; }
+    .hl h1 { font-size: 30px; font-weight: 800; line-height: 1.05; letter-spacing: -0.03em; }
+    .hl h1 em { color: var(--accent); font-style: normal; display: block; }
+    @media (max-width: 380px) { .hl h1 { font-size: 26px; } }
+
+    /* PDF preview card */
+    .pdf-preview {
+      background: var(--accent2-dim);
+      border: 1px solid rgba(255,226,122,0.15);
+      border-radius: var(--r);
+      padding: 14px 16px;
+      display: flex; align-items: center; gap: 14px;
+      margin-bottom: 20px;
+      opacity: 0; animation: up 0.35s ease 0.2s forwards;
+    }
+    .pdf-icon {
+      width: 40px; height: 48px; flex-shrink: 0;
+      background: rgba(255,226,122,0.1);
+      border: 1px solid rgba(255,226,122,0.2);
+      border-radius: 6px;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center; gap: 3px;
+    }
+    .pdf-icon-label { font-family: var(--fm); font-size: 9px; color: var(--accent2); letter-spacing: 0.1em; }
+    .pdf-lines { display: flex; flex-direction: column; gap: 3px; padding: 0 4px; }
+    .pdf-line { height: 2px; background: rgba(255,226,122,0.3); border-radius: 1px; }
+    .pdf-line:nth-child(1) { width: 22px; }
+    .pdf-line:nth-child(2) { width: 18px; }
+    .pdf-line:nth-child(3) { width: 20px; }
+    .pdf-meta { flex: 1; min-width: 0; }
+    .pdf-title { font-size: 13px; font-weight: 700; color: var(--accent2); margin-bottom: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .pdf-desc { font-family: var(--fm); font-size: 11px; color: var(--muted); line-height: 1.5; }
+
+    .sub {
+      font-family: var(--fm); font-size: 12px; color: var(--muted);
+      line-height: 1.65; margin-bottom: 20px;
+      opacity: 0; animation: up 0.35s ease 0.25s forwards;
+    }
+
+    /* Fields */
+    .fields {
+      display: flex; flex-direction: column; gap: 12px;
+      opacity: 0; animation: up 0.35s ease 0.3s forwards;
+    }
+    .field { display: flex; flex-direction: column; gap: 6px; }
+    label { font-family: var(--fm); font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); }
+
+    input[type="text"], input[type="email"], select {
+      -webkit-appearance: none; appearance: none;
+      width: 100%; background: var(--bg);
+      border: 1px solid var(--border); border-radius: var(--r);
+      color: var(--text); font-family: var(--fm); font-size: 16px;
+      padding: 13px 14px; outline: none;
+      transition: border-color 0.18s, box-shadow 0.18s;
+      touch-action: manipulation;
+    }
+    input::placeholder { color: #2c3830; }
+    input:focus, select:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(93,255,176,0.07); }
+
+    select {
+      cursor: pointer;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='7' viewBox='0 0 12 7'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%236b7d70' stroke-width='1.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+      background-repeat: no-repeat; background-position: right 14px center; padding-right: 40px;
+    }
+    select option { background: #181f1a; }
+    select.ph { color: #2c3830; }
+
+    /* Checkbox */
+    .check-row { display: flex; align-items: flex-start; gap: 11px; padding: 2px 0; }
+    .check-row input[type="checkbox"] {
+      -webkit-appearance: none; appearance: none;
+      width: 20px; height: 20px; min-width: 20px;
+      background: var(--bg); border: 1px solid var(--border);
+      border-radius: 5px; cursor: pointer; margin-top: 1px;
+      transition: border-color 0.18s, background 0.18s;
+      position: relative; padding: 0; touch-action: manipulation;
+    }
+    .check-row input[type="checkbox"]:checked { background: var(--accent); border-color: var(--accent); }
+    .check-row input[type="checkbox"]:checked::after {
+      content: ''; position: absolute;
+      left: 5px; top: 2px; width: 6px; height: 10px;
+      border: 2px solid #0a1610; border-top: none; border-left: none;
+      transform: rotate(45deg);
+    }
+    .check-label { font-family: var(--fm); font-size: 12px; color: var(--muted); line-height: 1.6; cursor: pointer; text-transform: none; letter-spacing: 0; }
+    .check-label a { color: var(--accent); text-decoration: none; border-bottom: 1px solid rgba(93,255,176,0.3); }
+    .check-label a:hover { border-bottom-color: var(--accent); }
+
+    /* Honeypot */
+    .hp { position: absolute; left: -9999px; opacity: 0; pointer-events: none; }
+
+    /* Turnstile */
+    .ts-wrap { margin-top: 2px; }
+
+    /* Button */
+    .btn {
+      width: 100%; margin-top: 6px; padding: 16px;
+      background: var(--accent2); color: #1a1200;
+      border: none; border-radius: var(--r);
+      font-family: var(--fd); font-weight: 800; font-size: 16px;
+      letter-spacing: 0.02em; cursor: pointer;
+      transition: opacity 0.18s, transform 0.12s;
+      -webkit-tap-highlight-color: transparent; touch-action: manipulation;
+      opacity: 0; animation: up 0.35s ease 0.4s forwards;
+    }
+    .btn:hover:not(:disabled) { opacity: 0.87; }
+    .btn:active:not(:disabled) { opacity: 0.7; transform: scale(0.99); }
+    .btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+    /* Status */
+    .status { display: none; border-radius: var(--r); padding: 12px 14px; font-family: var(--fm); font-size: 12px; line-height: 1.55; margin-top: 12px; }
+    .ok { background: var(--accent-dim); border: 1px solid rgba(93,255,176,0.25); color: var(--accent); }
+    .err { background: rgba(255,107,107,0.07); border: 1px solid rgba(255,107,107,0.25); color: var(--danger); }
+
+    .card.done .fields, .card.done .btn { display: none; }
+    .card.done .ok { display: block; }
+
+    /* Footer */
+    .foot {
+      margin-top: 14px; font-family: var(--fm); font-size: 11px;
+      color: var(--muted); text-align: center;
+      opacity: 0; animation: up 0.35s ease 0.48s forwards;
+    }
+    .foot a { color: var(--muted); text-decoration: none; }
+    .foot a:hover { color: var(--accent); }
+
+    @media (max-height: 700px) {
+      .card { padding: 18px 18px 16px; }
+      .brand { margin-bottom: 12px; }
+      .hl h1 { font-size: 24px; }
+      .fields { gap: 10px; }
+      .btn { padding: 13px; }
+      .pdf-preview { padding: 10px 12px; margin-bottom: 14px; }
+    }
+
+    @keyframes up {
+      from { opacity: 0; transform: translateY(10px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+<div class="page">
+  <div class="card" id="card">
+
+    <!-- Brand -->
+    <div class="brand">
+      <svg viewBox="0 0 28 28" xmlns="http://www.w3.org/2000/svg">
+        <rect width="28" height="28" rx="6" fill="#132b1f"/>
+        <rect x="6" y="6" width="16" height="16" rx="2" fill="#1e4a30"/>
+        <rect x="9" y="10" width="3" height="3" fill="#5dffb0"/>
+        <rect x="16" y="10" width="3" height="3" fill="#5dffb0"/>
+        <rect x="9" y="16" width="2" height="2" fill="#5dffb0"/>
+        <rect x="17" y="16" width="2" height="2" fill="#5dffb0"/>
+        <rect x="11" y="17" width="6" height="2" fill="#5dffb0"/>
+      </svg>
+      <span class="brand-name"><b>Arboria</b> · Free Download</span>
+    </div>
+
+    <!-- Free badge -->
+    <div class="free-badge">
+      <span class="free-badge-dot"></span>100% free · no credit card
+    </div>
+
+    <!-- Headline -->
+    <div class="hl">
+      <h1>Your free<em>starter cheatsheet.</em></h1>
+    </div>
+
+    <!-- PDF preview -->
+    <div class="pdf-preview">
+      <div class="pdf-icon">
+        <span class="pdf-icon-label">PDF</span>
+        <div class="pdf-lines">
+          <div class="pdf-line"></div>
+          <div class="pdf-line"></div>
+          <div class="pdf-line"></div>
+        </div>
+      </div>
+      <div class="pdf-meta">
+        <div class="pdf-title">Arboria Beginner Cheatsheet</div>
+        <div class="pdf-desc">Everything you need to get started — sent straight to your inbox.</div>
+      </div>
+    </div>
+
+    <p class="sub">Drop your email below and we'll send it over immediately.</p>
+
+    <!-- Fields -->
+    <div class="fields">
+      <div class="field">
+        <label for="fullName">Full name</label>
+        <input type="text" id="fullName" name="fullName" placeholder="e.g. Ada Lovelace" autocomplete="name" />
+      </div>
+
+      <div class="field">
+        <label for="interest">I'm into…</label>
+        <select id="interest" name="interest" class="ph">
+          <option value="" disabled selected hidden>What interests you?</option>
+          <option value="Desk Buddy">🤖  Desk Buddy — Arduino desk mascot</option>
+          <option value="Pomodoro">🍅  Pomodoro — focus timer gadget</option>
+          <option value="All of the Above">✨  All of the above</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label for="email">Email address</label>
+        <input type="email" id="email" name="email" placeholder="ada@example.com" autocomplete="email" />
+      </div>
+
+      <!-- T&C -->
+      <div class="check-row">
+        <input type="checkbox" id="agree" name="agree" />
+        <label class="check-label" for="agree">
+          I agree to the
+          <a href="/terms" target="_blank" rel="noopener">Terms &amp; Conditions</a>
+          and
+          <a href="/privacy" target="_blank" rel="noopener">Privacy Policy</a>
+        </label>
+      </div>
+
+      <!-- Honeypot -->
+      <div class="hp" aria-hidden="true">
+        <input type="text" id="website" name="website" tabindex="-1" autocomplete="off" />
+      </div>
+
+      <!-- Turnstile -->
+      <div class="ts-wrap">
+        <div class="cf-turnstile" data-sitekey="YOUR_TURNSTILE_SITE_KEY" data-theme="dark" data-size="flexible"></div>
+      </div>
+    </div>
+
+    <button class="btn" id="submitBtn" type="button">Send me the cheatsheet →</button>
+
+    <div class="status ok" id="successMsg">
+      ✓ On its way! Check your inbox — your cheatsheet is heading to you now.
+    </div>
+    <div class="status err" id="errorMsg"></div>
+
+  </div>
+
+  <p class="foot">
+    © 2026 Arboria · Singapore &nbsp;·&nbsp;
+    <a href="mailto:hello@arboriasg.com">hello@arboriasg.com</a> &nbsp;·&nbsp;
+    <a href="https://arboriasg.com">arboriasg.com</a>
+  </p>
+</div>
+
+<script>
+  // ── Replace with your actual n8n webhook URL for the lead magnet ──
+  const WEBHOOK = 'https://n8n.arboriasg.com/webhook/arboria-freeguide';
+
+  const sel = document.getElementById('interest');
+  sel.addEventListener('change', () => sel.classList.toggle('ph', !sel.value));
+
+  async function getCountry() {
+    try {
+      const r = await fetch('https://ipapi.co/json/', { signal: AbortSignal.timeout(4000) });
+      const d = await r.json();
+      return d.country_name || d.country || 'Unknown';
+    } catch { return 'Unknown'; }
+  }
+
+  document.getElementById('submitBtn').addEventListener('click', async () => {
+    const fullName = document.getElementById('fullName').value.trim();
+    const interest = sel.value;
+    const email    = document.getElementById('email').value.trim();
+    const agreed   = document.getElementById('agree').checked;
+    const honeypot = document.getElementById('website').value;
+    const btn      = document.getElementById('submitBtn');
+
+    document.getElementById('errorMsg').style.display = 'none';
+
+    if (honeypot) return;
+    if (!fullName)                      return showErr('Please enter your full name.');
+    if (!interest)                      return showErr('Please select what you\'re into.');
+    if (!email || !email.includes('@')) return showErr('Please enter a valid email address.');
+    if (!agreed)                        return showErr('Please agree to the Terms & Conditions and Privacy Policy.');
+
+    const token = document.querySelector('[name="cf-turnstile-response"]')?.value;
+    if (!token) return showErr('Please complete the human check above.');
+
+    btn.disabled = true;
+    btn.textContent = 'Sending…';
+
+    const country = await getCountry();
+
+    try {
+      const res = await fetch(WEBHOOK, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          fullName, interest, email, country,
+          honeypot, cfTurnstileToken: token,
+          source: 'freeguide.arboriasg.com',
+          submittedAt: new Date().toISOString(),
+          type: 'freeguide'
+        }),
+      });
+
+      if (res.ok) {
+        document.getElementById('card').classList.add('done');
+        document.getElementById('successMsg').style.display = 'block';
+        // Redirect to thank you page after 1.5 seconds
+        setTimeout(() => {
+          window.location.href = '/thankyou.html';
+        }, 1500);
+      } else {
+        const body = await res.json().catch(() => ({}));
+        showErr(body.message || 'Something went wrong — please try again.');
+        btn.disabled = false;
+        btn.textContent = 'Send me the cheatsheet →';
+      }
+    } catch {
+      showErr('Network error — please check your connection and try again.');
+      btn.disabled = false;
+      btn.textContent = 'Send me the cheatsheet →';
+    }
+  });
+
+  function showErr(msg) {
+    const el = document.getElementById('errorMsg');
+    el.textContent = '⚠ ' + msg;
+    el.style.display = 'block';
+  }
+</script>
+</body>
+</html>
