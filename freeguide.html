@@ -154,7 +154,7 @@
     .field { display: flex; flex-direction: column; gap: 6px; }
     label { font-family: var(--fm); font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); }
 
-    input[type="text"], input[type="email"], select {
+    input[type="text"], input[type="email"] {
       -webkit-appearance: none; appearance: none;
       width: 100%; background: var(--bg);
       border: 1px solid var(--border); border-radius: var(--r);
@@ -164,15 +164,7 @@
       touch-action: manipulation;
     }
     input::placeholder { color: #2c3830; }
-    input:focus, select:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(93,255,176,0.07); }
-
-    select {
-      cursor: pointer;
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='7' viewBox='0 0 12 7'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%236b7d70' stroke-width='1.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
-      background-repeat: no-repeat; background-position: right 14px center; padding-right: 40px;
-    }
-    select option { background: #181f1a; }
-    select.ph { color: #2c3830; }
+    input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(93,255,176,0.07); }
 
     /* Checkbox */
     .check-row { display: flex; align-items: flex-start; gap: 11px; padding: 2px 0; }
@@ -302,16 +294,6 @@
       </div>
 
       <div class="field">
-        <label for="interest">I'm into…</label>
-        <select id="interest" name="interest" class="ph">
-          <option value="" disabled selected hidden>What interests you?</option>
-          <option value="Desk Buddy">🤖  Desk Buddy — Arduino desk mascot</option>
-          <option value="Pomodoro">🍅  Pomodoro — focus timer gadget</option>
-          <option value="All of the Above">✨  All of the above</option>
-        </select>
-      </div>
-
-      <div class="field">
         <label for="email">Email address</label>
         <input type="email" id="email" name="email" placeholder="ada@example.com" autocomplete="email" />
       </div>
@@ -358,9 +340,6 @@
   // ── Replace with your actual n8n webhook URL for the lead magnet ──
   const WEBHOOK = 'https://n8n.arboriasg.com/webhook/arboria-freeguide';
 
-  const sel = document.getElementById('interest');
-  sel.addEventListener('change', () => sel.classList.toggle('ph', !sel.value));
-
   async function getCountry() {
     try {
       const r = await fetch('https://ipapi.co/json/', { signal: AbortSignal.timeout(4000) });
@@ -371,7 +350,6 @@
 
   document.getElementById('submitBtn').addEventListener('click', async () => {
     const fullName = document.getElementById('fullName').value.trim();
-    const interest = sel.value;
     const email    = document.getElementById('email').value.trim();
     const agreed   = document.getElementById('agree').checked;
     const honeypot = document.getElementById('website').value;
@@ -381,7 +359,6 @@
 
     if (honeypot) return;
     if (!fullName)                      return showErr('Please enter your full name.');
-    if (!interest)                      return showErr('Please select what you\'re into.');
     if (!email || !email.includes('@')) return showErr('Please enter a valid email address.');
     if (!agreed)                        return showErr('Please agree to the Terms & Conditions and Privacy Policy.');
 
@@ -398,9 +375,9 @@
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          fullName, interest, email, country,
+          fullName, email, country,
           honeypot, cfTurnstileToken: token,
-          source: 'freeguide.arboriasg.com',
+          source: 'waitlist.arboriasg.com/freeguide.html',
           submittedAt: new Date().toISOString(),
           type: 'freeguide'
         }),
