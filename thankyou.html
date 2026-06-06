@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
   <title>You're in — Arboria</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -12,15 +13,16 @@
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --bg:         #0d0f0e;
-      --surface:    #131715;
-      --border:     #252b27;
-      --text:       #e4ebe5;
-      --muted:      #6b7d70;
-      --accent:     #5dffb0;
-      --accent-dim: #132b1f;
-      --accent2:    #ffe27a;
-      --accent2-dim:#2a2010;
+      --bg:         #F0EADC;
+      --surface:    #ffffff;
+      --border:     #d6cdb8;
+      --text:       #2a1f0e;
+      --muted:      #8a7d65;
+      --accent:     #4C893A;
+      --accent-dim: #dff0d4;
+      --accent-dark:#3a6b2b;
+      --yellow:     #FFD946;
+      --yellow-dim: #fffbf0;
       --fd: 'Syne', sans-serif;
       --fm: 'DM Mono', monospace;
       --r: 12px;
@@ -31,7 +33,7 @@
     body {
       color: var(--text); font-family: var(--fd);
       overflow-x: hidden; -webkit-text-size-adjust: 100%;
-      background-image: radial-gradient(circle, #212b23 1px, transparent 1px);
+      background-image: radial-gradient(circle, #d6cdb8 1px, transparent 1px);
       background-size: 26px 26px;
     }
 
@@ -39,7 +41,7 @@
       content: ''; position: fixed;
       top: -100px; left: 50%; transform: translateX(-50%);
       width: 100%; height: 340px;
-      background: radial-gradient(ellipse, rgba(93,255,176,0.07) 0%, transparent 70%);
+      background: radial-gradient(ellipse, rgba(76,137,58,0.07) 0%, transparent 70%);
       pointer-events: none; z-index: 0;
     }
 
@@ -62,10 +64,9 @@
 
     @media (max-width: 500px) {
       .page { padding: 16px; padding-top: max(16px, env(safe-area-inset-top)); padding-bottom: max(16px, env(safe-area-inset-bottom)); }
-      .card { border-radius: 18px; padding: 22px 18px 20px; max-width: 100%; }
+      .card { border-radius: 18px; padding: 24px 18px 22px; max-width: 100%; }
     }
 
-    /* Brand */
     .brand {
       display: flex; align-items: center; gap: 9px;
       margin-bottom: 20px;
@@ -75,86 +76,73 @@
     .brand-name { font-family: var(--fm); font-size: 11px; color: var(--muted); letter-spacing: 0.14em; text-transform: uppercase; }
     .brand-name b { color: var(--accent); font-weight: 500; }
 
-    /* Success tick */
     .tick-wrap {
-      display: flex; justify-content: center;
-      margin-bottom: 20px;
+      display: flex; justify-content: center; margin-bottom: 20px;
       opacity: 0; animation: pop 0.5s cubic-bezier(0.175,0.885,0.32,1.275) 0.1s forwards;
     }
     .tick-circle {
       width: 64px; height: 64px; border-radius: 50%;
       background: var(--accent-dim);
-      border: 2px solid rgba(93,255,176,0.3);
+      border: 2px solid rgba(76,137,58,0.3);
       display: flex; align-items: center; justify-content: center;
     }
-    .tick-circle svg { width: 28px; height: 28px; }
 
-    /* Headline */
     .hl { text-align: center; margin-bottom: 8px; opacity: 0; animation: up 0.35s ease 0.2s forwards; }
-    .hl h1 { font-size: 28px; font-weight: 800; line-height: 1.1; letter-spacing: -0.03em; }
+    .hl h1 { font-size: 26px; font-weight: 800; line-height: 1.1; letter-spacing: -0.03em; color: var(--text); }
     .hl h1 em { color: var(--accent); font-style: normal; display: block; }
-    @media (max-width: 380px) { .hl h1 { font-size: 24px; } }
+    @media (max-width: 380px) { .hl h1 { font-size: 22px; } }
 
     .sub {
       font-family: var(--fm); font-size: 12px; color: var(--muted);
-      line-height: 1.65; text-align: center; margin-bottom: 24px;
+      line-height: 1.65; text-align: center; margin-bottom: 22px;
       opacity: 0; animation: up 0.35s ease 0.25s forwards;
     }
 
-    /* Divider */
     .divider {
       display: flex; align-items: center; gap: 12px;
-      margin-bottom: 20px;
+      margin-bottom: 16px;
       opacity: 0; animation: up 0.35s ease 0.3s forwards;
     }
     .divider-line { flex: 1; height: 1px; background: var(--border); }
     .divider-text { font-family: var(--fm); font-size: 10px; color: var(--muted); letter-spacing: 0.12em; text-transform: uppercase; white-space: nowrap; }
 
-    /* CTA cards */
     .ctas {
-      display: flex; flex-direction: column; gap: 10px;
+      display: flex; flex-direction: column; gap: 9px;
       opacity: 0; animation: up 0.35s ease 0.35s forwards;
     }
 
     .cta-btn {
-      display: flex; align-items: center; gap: 14px;
-      padding: 14px 16px;
+      display: flex; align-items: center; gap: 12px;
+      padding: 13px 16px;
       background: var(--bg);
       border: 1px solid var(--border);
       border-radius: var(--r);
       text-decoration: none; color: var(--text);
-      transition: border-color 0.18s, transform 0.12s;
-      cursor: pointer;
-      -webkit-tap-highlight-color: transparent;
-      touch-action: manipulation;
+      transition: border-color 0.18s, background 0.18s, transform 0.12s;
+      -webkit-tap-highlight-color: transparent; touch-action: manipulation;
     }
-    .cta-btn:hover { border-color: var(--accent); transform: translateX(2px); }
+    .cta-btn:hover { border-color: var(--accent); background: var(--accent-dim); transform: translateX(2px); }
     .cta-btn:active { transform: scale(0.99); }
 
     .cta-btn.primary {
       background: var(--accent-dim);
-      border-color: rgba(93,255,176,0.25);
+      border-color: rgba(76,137,58,0.3);
     }
     .cta-btn.primary:hover { border-color: var(--accent); }
 
     .cta-icon {
       width: 36px; height: 36px; border-radius: 8px;
       display: flex; align-items: center; justify-content: center;
-      flex-shrink: 0; font-size: 18px;
+      flex-shrink: 0; font-size: 17px;
     }
-    .cta-icon.green { background: rgba(93,255,176,0.1); }
-    .cta-icon.tiktok { background: rgba(255,255,255,0.05); }
-    .cta-icon.yt { background: rgba(255,80,80,0.1); }
-    .cta-icon.ig { background: rgba(200,100,255,0.1); }
-    .cta-icon.web { background: rgba(93,255,176,0.06); }
+    .cta-icon.green { background: rgba(76,137,58,0.12); }
+    .cta-icon.soft  { background: rgba(42,31,14,0.06); }
 
     .cta-meta { flex: 1; min-width: 0; }
-    .cta-label { font-size: 13px; font-weight: 700; margin-bottom: 2px; }
+    .cta-label { font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 2px; }
     .cta-desc { font-family: var(--fm); font-size: 11px; color: var(--muted); }
+    .cta-arrow { font-size: 14px; color: var(--muted); flex-shrink: 0; }
 
-    .cta-arrow { font-family: var(--fm); font-size: 14px; color: var(--muted); flex-shrink: 0; }
-
-    /* Footer */
     .foot {
       font-family: var(--fm); font-size: 11px; color: var(--muted); text-align: center;
       opacity: 0; animation: up 0.35s ease 0.5s forwards;
@@ -165,10 +153,10 @@
     @media (max-height: 700px) {
       .card { padding: 18px 18px 16px; }
       .brand { margin-bottom: 12px; }
-      .tick-circle { width: 52px; height: 52px; }
+      .tick-circle { width: 50px; height: 50px; }
       .hl h1 { font-size: 22px; }
-      .ctas { gap: 8px; }
-      .cta-btn { padding: 11px 14px; }
+      .ctas { gap: 7px; }
+      .cta-btn { padding: 10px 14px; }
     }
 
     @keyframes up {
@@ -185,72 +173,64 @@
 <div class="page">
   <div class="card">
 
-    <!-- Brand -->
     <div class="brand">
       <svg viewBox="0 0 28 28" xmlns="http://www.w3.org/2000/svg">
-        <rect width="28" height="28" rx="6" fill="#132b1f"/>
-        <rect x="6" y="6" width="16" height="16" rx="2" fill="#1e4a30"/>
-        <rect x="9" y="10" width="3" height="3" fill="#5dffb0"/>
-        <rect x="16" y="10" width="3" height="3" fill="#5dffb0"/>
-        <rect x="9" y="16" width="2" height="2" fill="#5dffb0"/>
-        <rect x="17" y="16" width="2" height="2" fill="#5dffb0"/>
-        <rect x="11" y="17" width="6" height="2" fill="#5dffb0"/>
+        <rect width="28" height="28" rx="6" fill="#dff0d4"/>
+        <rect x="6" y="6" width="16" height="16" rx="2" fill="#b3d99a"/>
+        <rect x="9" y="10" width="3" height="3" fill="#4C893A"/>
+        <rect x="16" y="10" width="3" height="3" fill="#4C893A"/>
+        <rect x="9" y="16" width="2" height="2" fill="#4C893A"/>
+        <rect x="17" y="16" width="2" height="2" fill="#4C893A"/>
+        <rect x="11" y="17" width="6" height="2" fill="#4C893A"/>
       </svg>
       <span class="brand-name"><b>Arboria</b> · Thank you</span>
     </div>
 
-    <!-- Tick -->
     <div class="tick-wrap">
       <div class="tick-circle">
-        <svg viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M6 14l6 6 10-10" stroke="#5dffb0" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+        <svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M6 14l6 6 10-10" stroke="#4C893A" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
         </svg>
       </div>
     </div>
 
-    <!-- Headline -->
     <div class="hl">
       <h1>Check your inbox —<em>it's on its way!</em></h1>
     </div>
     <p class="sub">Your cheatsheet is heading to you now. While you wait, here's what else Arboria is building.</p>
 
-    <!-- Divider -->
     <div class="divider">
       <div class="divider-line"></div>
       <span class="divider-text">also from Arboria</span>
       <div class="divider-line"></div>
     </div>
 
-    <!-- CTAs -->
     <div class="ctas">
 
-      <!-- Waitlist -->
       <a href="https://waitlist.arboriasg.com" class="cta-btn primary">
         <div class="cta-icon green">🤖</div>
         <div class="cta-meta">
           <div class="cta-label">Join the Product Waitlist</div>
-          <div class="cta-desc">Desk Buddy & Pomodoro — be first in line</div>
+          <div class="cta-desc">Desk Buddy &amp; Pomodoro — be first in line</div>
         </div>
         <span class="cta-arrow">→</span>
       </a>
 
-      <!-- TikTok -->
       <a href="https://tiktok.com/@arboriasg" target="_blank" rel="noopener" class="cta-btn">
-        <div class="cta-icon tiktok">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="white" xmlns="http://www.w3.org/2000/svg">
+        <div class="cta-icon soft">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="#2a1f0e" xmlns="http://www.w3.org/2000/svg">
             <path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.33 6.33 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34V8.69a8.18 8.18 0 004.78 1.52V6.76a4.85 4.85 0 01-1.01-.07z"/>
           </svg>
         </div>
         <div class="cta-meta">
           <div class="cta-label">Follow on TikTok</div>
-          <div class="cta-desc">@arboriasg — maker tutorials & builds</div>
+          <div class="cta-desc">@arboriasg — maker tutorials &amp; builds</div>
         </div>
         <span class="cta-arrow">→</span>
       </a>
 
-      <!-- YouTube -->
       <a href="https://youtube.com/@arboriasg" target="_blank" rel="noopener" class="cta-btn">
-        <div class="cta-icon yt">▶</div>
+        <div class="cta-icon soft" style="color:#c0392b; font-size:18px;">▶</div>
         <div class="cta-meta">
           <div class="cta-label">Watch on YouTube</div>
           <div class="cta-desc">@arboriasg — step-by-step build videos</div>
@@ -258,9 +238,8 @@
         <span class="cta-arrow">→</span>
       </a>
 
-      <!-- Instagram -->
       <a href="https://instagram.com/arboriasg" target="_blank" rel="noopener" class="cta-btn">
-        <div class="cta-icon ig">📸</div>
+        <div class="cta-icon soft">📸</div>
         <div class="cta-meta">
           <div class="cta-label">Follow on Instagram</div>
           <div class="cta-desc">@arboriasg — behind the scenes</div>
@@ -268,12 +247,11 @@
         <span class="cta-arrow">→</span>
       </a>
 
-      <!-- Website -->
       <a href="https://arboriasg.com" target="_blank" rel="noopener" class="cta-btn">
-        <div class="cta-icon web">🌿</div>
+        <div class="cta-icon green">🌿</div>
         <div class="cta-meta">
           <div class="cta-label">Visit arboriasg.com</div>
-          <div class="cta-desc">Our full site — products, blog & more</div>
+          <div class="cta-desc">Our full site — products, blog &amp; more</div>
         </div>
         <span class="cta-arrow">→</span>
       </a>
@@ -281,10 +259,7 @@
     </div>
   </div>
 
-  <p class="foot">
-    © 2026 Arboria · Singapore &nbsp;·&nbsp;
-    <a href="mailto:hello@arboriasg.com">hello@arboriasg.com</a>
-  </p>
+  <p class="foot">© 2026 Arboria · Singapore &nbsp;·&nbsp; <a href="mailto:hello@arboriasg.com">hello@arboriasg.com</a></p>
 </div>
 </body>
 </html>
