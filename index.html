@@ -10,6 +10,29 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=DM+Sans:ital,wght@0,400;0,500;0,600&display=swap" rel="stylesheet" />
   <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+  <script type="text/javascript">
+  // Single Page Apps for GitHub Pages
+  // MIT License
+  // https://github.com/rafgraph/spa-github-pages
+  (function(l) {
+    if (l.search[1] === 'p' ) {
+      var decoded = l.search.slice(1).split('&').map(function(s) {
+        return s.replace(/~and~/g, '&')
+      }).reduce(function(searchObj, v) {
+        var parts = v.split('=');
+        searchObj[parts[0]] = parts[1];
+        return searchObj;
+      }, {});
+      if (decoded.p !== undefined) {
+        window.history.replaceState(null, null,
+          l.internalPath = l.pathname.slice(0, -1) + (decoded.p || '') +
+          (decoded.q ? ('?' + decoded.q) : '') +
+          l.hash
+        );
+      }
+    }
+  }(window.location));
+</script>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
